@@ -1,16 +1,19 @@
 # Lärarfacit (dela inte med eleverna)
 
-## Förväntade CodeQL-fynd i src/server.js
-| Rad (ca) | Sårbarhet | Regel |
-|---|---|---|
-| /search | SQL-injektion | js/sql-injection |
-| /search | Reflekterad XSS | js/reflected-xss |
-| /ping | Kommandoinjektion | js/command-line-injection |
-| /file | Path traversal | js/path-injection |
-| /go | Öppen redirect | js/server-side-unvalidated-url-redirection |
-| ADMIN_PASSWORD | Hårdkodade uppgifter | js/hardcoded-credentials (kan utebli: verifiera) |
+## Verifierat CodeQL-utfall (default setup, körd 2026-11-03)
+8 fynd i src/server.js:
 
-OBS: listan är ännu inte verifierad mot en riktig CodeQL-körning. Kör övningen i ett eget publikt testrepo före lektionen och uppdatera tabellen.
+| Rad | Sårbarhet | Regel | Allvarlighet |
+|---|---|---|---|
+| 33 | Kommandoinjektion (/ping) | js/command-line-injection | critical |
+| 24 | SQL-injektion (/search) | js/sql-injection | high |
+| 27 | Reflekterad XSS (/search) | js/reflected-xss | high |
+| 41 | Path traversal (/file) | js/path-injection | high |
+| 58 | Öppen redirect (/go) | js/server-side-unvalidated-url-redirection | medium |
+| 21, 32, 39 | Saknad rate limiting (/search, /ping, /file) | js/missing-rate-limiting | high |
+
+Hårdkodat lösenord (ADMIN_PASSWORD) hittades INTE av CodeQL. Bra diskussionspunkt: SAST hittar inte allt, använd även hemlighetsskanning (t.ex. gitleaks, GitHub secret scanning).
+Rate limiting-fynden är inte vad vi byggde in, men är riktiga och kan användas för att prata om triagering.
 
 ## Felsökning
 - Privat repo: ingen Code scanning utan Advanced Security.
